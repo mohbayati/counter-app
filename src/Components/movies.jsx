@@ -1,9 +1,11 @@
 import React from "react";
 import { getMovies } from "./../services/fakeMovieService";
 import Like from "./Like";
+import Pagination from "./pagination";
+import { paginate } from "./utils/paginate";
 
 class Movies extends React.Component {
-  state = { movies: getMovies() };
+  state = { movies: getMovies(), pageSize: 4, currentPage: 1 };
 
   handleDelete = (movie) => {
     this.setState({
@@ -12,6 +14,9 @@ class Movies extends React.Component {
       ),
     });
   };
+  handlePageChange = (page) => {
+    this.setState({ currentPage: page });
+  };
   handleLike = (movie) => {
     const movies = [...this.state.movies];
     const index = movies.indexOf(movie);
@@ -19,7 +24,11 @@ class Movies extends React.Component {
     this.setState(movies);
   };
   render() {
-    if (this.state.movies.length === 0)
+    const { movies: allMovies, pageSize, currentPage } = this.state;
+
+    const movies = paginate(allMovies, currentPage, pageSize);
+
+    if (movies.length === 0)
       return (
         <main className="container">
           <h3>there is no movies in the database</h3>{" "}
@@ -27,7 +36,7 @@ class Movies extends React.Component {
       );
     return (
       <main className="container">
-        <h3>showing {this.state.movies.length} movies in the database</h3>
+        <h3>showing {allMovies.length} movies in the database</h3>
         <hr />
         <table className="table">
           <thead>
@@ -41,7 +50,7 @@ class Movies extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.movies.map((movie) => (
+            {movies.map((movie) => (
               <tr key={movie._id}>
                 <td>{movie.title} </td>
                 <td>{movie.genre.name} </td>
@@ -66,6 +75,12 @@ class Movies extends React.Component {
             ))}
           </tbody>
         </table>
+        <Pagination
+          itemCount={allMovies.length}
+          pageSize={pageSize}
+          onPageChange={this.handlePageChange}
+          currentPage={currentPage}
+        />
       </main>
     );
   }
