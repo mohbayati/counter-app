@@ -1,7 +1,14 @@
 import React from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Counters from "./Components/counters";
-import Navbar from "./Components/Navbar";
+import BootsNavBar from "./Components/bootsNavBar";
+import Costomers from "./Components/costumers";
+import MovieForm from "./Components/movieForm";
+// import Counters from "./Components/counters";
+import Movies from "./Components/movies";
+// import Navbar from "./Components/Navbar";
+import NotFound from "./Components/not-Found";
+import Rentals from "./Components/rentals";
 
 class App extends React.Component {
   state = {
@@ -38,18 +45,30 @@ class App extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Navbar
+        <BrowserRouter>
+          {/* <Navbar
           totalCounter={this.state.counters.filter((c) => c.value > 0).length}
-        />
-        <main className="container">
-          <Counters
+        /> */}
+          <BootsNavBar />
+          <main className="container">
+            {/* <Counters
             onReset={this.handleReset}
             onDelete={this.handleDelete}
             onIncriment={this.handleIncriment}
             onDecriment={this.handleDecriment}
             counters={this.state.counters}
-          />
-        </main>
+          /> */}
+            <Routes>
+              <Route path="/movies" element={<Movies />} />
+              <Route path="/movies/:id" element={<MovieForm />} />
+              <Route path="/costumers" element={<Costomers />} />
+              <Route path="/rentals" element={<Rentals />} />
+              <Route path="/not-found" element={<NotFound />} />
+              <Route path="/" element={<Navigate to="/movies" />} />
+              <Route path="*" element={<Navigate to="/not-found   " />} />
+            </Routes>
+          </main>
+        </BrowserRouter>
       </React.Fragment>
     );
   }
