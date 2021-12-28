@@ -3,11 +3,14 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import BootsNavBar from "./Components/bootsNavBar";
 import Costomers from "./Components/costumers";
-import MovieForm from "./Components/movieForm";
+import LoginForm from "./Components/loginForm";
+//import MovieForm from "./Components/movieForm";
+import MovieFormWrapper from "./Components/movieFormWrapper";
 // import Counters from "./Components/counters";
 import Movies from "./Components/movies";
 // import Navbar from "./Components/Navbar";
 import NotFound from "./Components/not-Found";
+import RegisterForm from "./Components/registerForm";
 import Rentals from "./Components/rentals";
 
 class App extends React.Component {
@@ -59,13 +62,18 @@ class App extends React.Component {
             counters={this.state.counters}
           /> */}
             <Routes>
+              <Route path="/login" element={<LoginForm />} />
               <Route path="/movies" element={<Movies />} />
-              <Route path="/movies/:id" element={<MovieForm />} />
+              <Route path="/movies/:id" element={<MovieFormWrapper />} />
               <Route path="/costumers" element={<Costomers />} />
               <Route path="/rentals" element={<Rentals />} />
               <Route path="/not-found" element={<NotFound />} />
+              <Route
+                path="/register"
+                element={<RegisterForm to="/register" />}
+              />
               <Route path="/" element={<Navigate to="/movies" />} />
-              <Route path="*" element={<Navigate to="/not-found   " />} />
+              <Route path="*" element={<Navigate to="/not-found" />} />
             </Routes>
           </main>
         </BrowserRouter>

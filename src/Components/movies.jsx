@@ -6,13 +6,17 @@ import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
 import { getGenres } from "./../services/fakeGenreService";
 import _ from "lodash";
+import { Link } from "react-router-dom";
+import SearchBox from "./common/searchBox";
 
 class Movies extends React.Component {
   state = {
     movies: [],
     genres: [],
     pageSize: 4,
+    selectedGenre: null,
     currentPage: 1,
+    searchMoevie: "",
     sortColumn: { path: "title", order: "asc" },
   };
 
@@ -45,6 +49,7 @@ class Movies extends React.Component {
   handleGenerSelecte = (item) => {
     this.setState({
       selectedGenre: item,
+      searchMoevie: "",
       currentPage: 1,
     });
   };
@@ -53,12 +58,17 @@ class Movies extends React.Component {
       movies: allMovies,
       pageSize,
       currentPage,
-
+      searchMoevie,
       selectedGenre,
       sortColumn,
     } = this.state;
+
     const filters =
-      selectedGenre && selectedGenre._id
+      searchMoevie !== ""
+        ? allMovies.filter((m) =>
+            m.title.toLowerCase().startsWith(searchMoevie.toLowerCase())
+          )
+        : selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
         : allMovies;
 
@@ -66,15 +76,26 @@ class Movies extends React.Component {
     const movies = paginate(sorted, currentPage, pageSize);
     return { totalCount: filters.length, data: movies };
   };
+  handleChangeSearch = ({ currentTarget: input }) => {
+    this.setState({
+      searchMoevie: input.value,
+      selectedGenre: null,
+      currentPage: 1,
+    });
+    // const item = { _id: "", name: "All Genres" };
+    // this.handleGenerSelecte(item);
+    // this.getPageData();
+  };
   render() {
-    const { pageSize, currentPage, genres, selectedGenre } = this.state;
+    const { pageSize, currentPage, genres, selectedGenre, searchMoevie } =
+      this.state;
     const { totalCount, data } = this.getPageData();
-    if (data.length === 0)
-      return (
-        <main className="container">
-          <h3>there is no movies in the database</h3>{" "}
-        </main>
-      );
+    // if (data.length === 0)
+    //   return (
+    //     <main className="container">
+    //       <h3>there is no movies in the database</h3>{" "}
+    //     </main>
+    //   );
     return (
       <main className="container">
         <div className="row">
@@ -85,8 +106,17 @@ class Movies extends React.Component {
               onItemSelect={this.handleGenerSelecte}
             />
           </div>
+
           <div className="col">
+            <Link to="/movies/new" className="btn btn-primary">
+              New Movie
+            </Link>
             <h3>showing {totalCount} movies in the database</h3>
+            <SearchBox
+              name="search"
+              searchMoevie={searchMoevie}
+              onSearchChange={this.handleChangeSearch}
+            />
             <hr />
             <MoviesTable
               movies={data}
